@@ -1,0 +1,11 @@
+Prova Técnica para Estagiário de Dados
+Objetivo
+Avaliar os conhecimentos práticos do candidato em ETL com Python, tratamento de dados e análise exploratória de dados públicos.
+Desafio
+O candidato deverá utilizar os conjuntos de dados de itens e contratos do Portal de Compras do Estado do Rio de Janeiro para desenvolver um processo de ETL, contemplando extração, limpeza, padronização, tratamento de valores nulos e duplicados e relacionamento entre os conjuntos de dados, sempre que possível.
+Após o tratamento, deverá realizar uma análise dos dados, identificando padrões, tendências, indicadores e informações relevantes, apresentando os resultados em um relatório com gráficos, tabelas e conclusões baseadas nos dados.
+O projeto deverá possuir código organizado, separação das etapas do ETL e um arquivo README.md com instruções para execução.
+Critérios de avaliação
+Serão avaliados a qualidade do ETL, a consistência dos dados tratados, o relacionamento entre as bases, a relevância das análises realizadas, a clareza das visualizações, a interpretação dos resultados e a organização do código.
+ 
+https://www.compras.rj.gov.br/siga/imagens/CONTRATOS.zip

@@ -1,0 +1,36 @@
+# Ambientes virtuais
+.venv/
+venv/
+ENV/
+env/
+
+# Byte-compiled / Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Dados brutos volumosos (CSVs e ZIPs na pasta raw)
+data/raw/*.csv
+data/raw/*.CSV
+data/raw/*.zip
+data/raw/*.ZIP
+!data/raw/.gitkeep
+
+# Arquivos de dados processados volumosos
+data/processed/*.csv
+data/processed/*.parquet
+!data/processed/.gitkeep
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operacional
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
