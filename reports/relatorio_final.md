@@ -1,4 +1,4 @@
-# Relatório Executivo: Análise de Contratos e Compras Públicas do Estado do Rio de Janeiro
+# Relatório Final: Análise de Contratos e Compras Públicas do Estado do Rio de Janeiro
 
 **Projeto:** Processo de ETL, Modelagem Dimensional e Análise Exploratória de Dados Públicos  
 **Fonte de Dados:** Portal de Compras do Estado do Rio de Janeiro (SIGA)  

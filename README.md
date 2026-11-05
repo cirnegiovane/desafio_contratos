@@ -216,5 +216,5 @@ O script executará automaticamente todas as etapas:
 - **Concentração de Fornecedore:** Apenas **585 empresas** (3,5% do total) representam **80% do valor despendido** pelo Estado.
 - **Transição Regulatória:** Adoção expressiva da **Nova Lei de Licitações (Lei nº 14.133/2021)** a partir de 2023, substituindo o regime da Lei nº 8.666/1993.
 
-> 📊 O detalhamento analítico aprofundado, gráficos e interpretações estão disponíveis em:  
+> O detalhamento analítico aprofundado, gráficos e interpretações estão disponíveis em:  
 > [`reports/relatorio_final.md`](reports/relatorio_final.md)
