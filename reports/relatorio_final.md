@@ -11,7 +11,7 @@
 
 Este documento apresenta a análise técnica e econômica das aquisições e contratações do Estado do Rio de Janeiro, com base no processamento integral dos registros do Sistema Integrado de Gestão de Aquisições (SIGA).
 
-Após o desenvolvimento de um pipeline robusto de **Extração, Transformação e Carga (ETL)** em arquitetura medalhão (Bronze $\rightarrow$ Silver $\rightarrow$ Gold), foram saneados e consolidados **130.566 contratos** e **341.245 itens contratados**, totalizando **R$ 140,41 bilhões** em valor global contratado.
+Após o desenvolvimento de um pipeline de **Extração, Transformação e Carga (ETL)** em arquitetura medalhão (Bronze $\rightarrow$ Silver $\rightarrow$ Gold), foram saneados e consolidados **130.566 contratos** e **341.245 itens contratados**, totalizando **R$ 140,41 bilhões** em valor global contratado.
 
 ### Principais Destaques (KPIs):
 
@@ -59,7 +59,7 @@ A qualidade dos dados foi assegurada mediante a aplicação de rigorosos critér
 
 ---
 
-## 3. Análise Detalhada dos Resultados e Storytelling
+## 3. Análise Detalhada dos Resultados
 
 ### 3.1. O Funil de Execução da Despesa Pública
 
