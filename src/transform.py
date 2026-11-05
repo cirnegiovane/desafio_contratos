@@ -118,7 +118,7 @@ def transformar_contratos(df_raw: pd.DataFrame) -> pd.DataFrame:
     logger.info("Iniciando transformação e limpeza de CONTRATOS...")
     df = df_raw.copy()
     
-    # 1. Normalização de Nomes de Colunas
+    # normalização de nomes de colunas
     df.columns = [normalizar_nome_coluna(c) for c in df.columns]
     
     # Mapeamento semântico

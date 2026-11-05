@@ -4,7 +4,7 @@ Repositório contendo um processo completo de **ETL (Extract, Transform, Load)**
 
 ---
 
-## 📌 Sumário
+## Sumário
 
 - [1. Visão Geral e Objetivos](#1-visão-geral-e-objetivos)
 - [2. Arquitetura do Pipeline de Dados](#2-arquitetura-do-pipeline-de-dados)
@@ -27,12 +27,12 @@ O projeto tem como finalidade ingerir, sanear, estruturar e analisar dois conjun
 
 ## 2. Arquitetura do Pipeline de Dados
 
-O fluxo foi concebido seguindo as melhores práticas da Engenharia de Dados moderna (Arquitetura Medalhão):
+O fluxo segue a Arquitetura Medalhão:
 
 ```
 ┌──────────────────────────────────────┐
 │            CAMADA BRONZE             │
-│    (Dados Brutos / Raw Ingestion)    │ -> Ingestão segura dos CSVs brutos (encoding latin1, sep=';')
+│    (Dados Brutos / Raw Ingestion)    │ -> Ingestão dos CSVs brutos (encoding latin1, sep=';')
 └──────────────────┬───────────────────┘
                    │
                    ▼
@@ -52,8 +52,8 @@ O fluxo foi concebido seguindo as melhores práticas da Engenharia de Dados mode
                    ▼
 ┌──────────────────────────────────────┐
 │      ANÁLISE & STORYTELLING          │
-│       (Gráficos e Relatório)         │ -> 7 visualizações de alta resolução (300 DPI)
-└──────────────────────────────────────┘ -> Relatório Executivo com diagnósticos orçamentários
+│       (Gráficos e Relatório)         │ -> 7 visualizações gráficas
+└──────────────────────────────────────┘ -> Relatório final
 ```
 
 ---
@@ -76,16 +76,16 @@ desafio_contratos/
 ├── src/
 │   ├── __init__.py
 │   ├── config.py                      # Constantes, parâmetros e diretórios do projeto
-│   ├── extract.py                     # Módulo de extração segura da Camada Bronze
+│   ├── extract.py                     # Módulo de extração (Bronze)
 │   ├── transform.py                   # Regras de limpeza, tipagem e deduplicação (Silver)
 │   ├── model.py                       # Modelagem dimensional Star Schema (Gold)
 │   ├── load.py                        # Persistência em Parquet e CSV
-│   ├── visualize.py                   # Geração de 7 gráficos analíticos executivos
+│   ├── visualize.py                   # Geração de 7 gráficos
 │   └── analysis.py                    # KPIs financeiros, Pareto e métricas de compras
 ├── notebooks/
 │   └── exploratory_analysis.py        # Script para exploração interativa dos dados
 ├── reports/
-│   ├── figures/                       # Gráficos em alta resolução (300 DPI)
+│   ├── figures/                       # Gráficos
 │   │   ├── 01_funil_execucao_orcamentaria.png
 │   │   ├── 02_top_10_fornecedores_pareto.png
 │   │   ├── 03_top_10_orgaos_compradores.png
@@ -93,7 +93,7 @@ desafio_contratos/
 │   │   ├── 05_sazonalidade_mensal_gastos.png
 │   │   ├── 06_distribuicao_modalidades.png
 │   │   └── 07_elementos_despesa_publica.png
-│   └── relatorio_final.md             # Relatório analítico completo com conclusões
+│   └── relatorio_final.md             # Relatório analítico
 ├── main.py                            # Orquestrador do pipeline ponta a ponta
 ├── requirements.txt                   # Dependências do projeto
 └── README.md                          # Documentação técnica integral
@@ -170,7 +170,8 @@ A camada Gold estrutura os dados para consumo rápido por ferramentas de BI e an
 ### 1. Clonar ou Acessar a Pasta do Projeto
 
 ```bash
-cd E:\Projetos\desafio_contratos
+git clone https://github.com/cirnegiovane/desafio_contratos.git
+cd desafio_contratos
 ```
 
 ### 2. Criar e Ativar o Ambiente Virtual (Opcional, mas recomendado)
@@ -194,13 +195,13 @@ pip install -r requirements.txt
 python main.py
 ```
 
-O script executará automaticamente todas as etapas em menos de 1 minuto:
+O script executará automaticamente todas as etapas:
 
-1. Ingestão segura dos CSVs brutos (`CONTRATOS.CSV` e `ITENS_CONTRATOS.CSV`).
+1. Ingestão dos CSVs brutos (`CONTRATOS.CSV` e `ITENS_CONTRATOS.CSV`).
 2. Limpeza, tipagem e deduplicação (Camada Silver).
 3. Construção do modelo dimensional e tabela analítica (Camada Gold).
 4. Persistência em Parquet e CSV em `data/processed/`.
-5. Geração de todas as 7 visualizações analíticas em `reports/figures/`.
+5. Geração de todas as 7 visualizações em `reports/figures/`.
 6. Exibição do resumo executivo de KPIs no console.
 
 ---
