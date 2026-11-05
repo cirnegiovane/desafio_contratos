@@ -43,7 +43,7 @@ def calcular_concentracao_pareto(df_contratos: pd.DataFrame) -> dict:
     top50_share = forn_agg.head(50)['vl_contrato'].sum() / total_gasto * 100
     top100_share = forn_agg.head(100)['vl_contrato'].sum() / total_gasto * 100
     
-    # Quantos fornecedores respondem por 80% do gasto?
+    # 80% do gasto
     idx_80 = forn_agg[forn_agg['pct_acumulado'] >= 80].index.min() + 1
     pct_forn_80 = (idx_80 / qtd_total_forn) * 100
     
@@ -57,18 +57,18 @@ def calcular_concentracao_pareto(df_contratos: pd.DataFrame) -> dict:
     }
 
 def gerar_relatorio_metricas(df_contratos: pd.DataFrame, df_itens: pd.DataFrame) -> dict:
-    """Gera um resumo consolidado de todas as métricas para alimentar o relatório executivo."""
+    """Gera um resumo de todas as métricas para alimentar o relatório."""
     logger.info("Calculando métricas analíticas e de negócio...")
     kpis = calcular_indicadores_financeiros(df_contratos)
     pareto = calcular_concentracao_pareto(df_contratos)
     
-    # Top 5 Fornecedores
+    # top5 fornecedores
     top5_forn = df_contratos.groupby('fornecedor_nome')['vl_contrato'].sum().sort_values(ascending=False).head(5)
     
-    # Top 5 Órgãos
+    # top5 órgãos
     top5_orgaos = df_contratos.groupby('sigla_orgao')['vl_contrato'].sum().sort_values(ascending=False).head(5)
     
-    # Distribuição por Regime Jurídico
+    # regime jurídico
     regimes = df_contratos.groupby('regime_juridico').agg(
         qtd=('id_contratacao', 'count'),
         valor=('vl_contrato', 'sum')

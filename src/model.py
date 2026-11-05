@@ -1,7 +1,6 @@
 """
 Módulo de Modelagem Dimensional (Camada Gold)
-Implementa o Esquema Estrela (Star Schema) e o relacionamento consistente
-entre os conjuntos de dados de Contratos e Itens Contratados.
+Implementa o relacionamento consistente entre os conjuntos de dados de Contratos e Itens Contratados.
 """
 import logging
 import pandas as pd
@@ -15,19 +14,18 @@ def criar_dimensoes_e_fatos(df_contratos: pd.DataFrame, df_itens: pd.DataFrame) 
     """
     logger.info("Iniciando construção do modelo dimensional (Star Schema)...")
     
-    # 1. Dimensão Fornecedor
     dim_fornecedor = df_contratos[[
         'id_fornecedor', 'fornecedor_nome', 'cpf_cnpj_limpo', 'tipo_documento'
     ]].drop_duplicates(subset=['id_fornecedor', 'cpf_cnpj_limpo']).copy()
     dim_fornecedor = dim_fornecedor.reset_index(drop=True)
     
-    # 2. Dimensão Órgão Comprador (Unidade Gestora - UG)
+    
     dim_orgao = df_contratos[[
         'id_ug', 'cod_ug', 'unidade_nome', 'sigla_orgao'
     ]].drop_duplicates(subset=['id_ug']).copy()
     dim_orgao = dim_orgao.reset_index(drop=True)
     
-    # 3. Dimensão Tempo / Calendário
+    
     datas_unicas = df_contratos['data_contratacao'].dropna().drop_duplicates().sort_values()
     dim_tempo = pd.DataFrame({'data': datas_unicas})
     dim_tempo['ano'] = dim_tempo['data'].dt.year
@@ -38,7 +36,7 @@ def criar_dimensoes_e_fatos(df_contratos: pd.DataFrame, df_itens: pd.DataFrame) 
     dim_tempo['ano_mes'] = dim_tempo['data'].dt.to_period('M').astype(str)
     dim_tempo = dim_tempo.reset_index(drop=True)
     
-    # 4. Tabela Fato: Execução Financeira dos Contratos
+    
     fato_contratos = df_contratos[[
         'id_contratacao', 'id_contrato_seq', 'id_fornecedor', 'id_ug',
         'data_contratacao', 'status_contratacao', 'regime_juridico',
@@ -52,14 +50,14 @@ def criar_dimensoes_e_fatos(df_contratos: pd.DataFrame, df_itens: pd.DataFrame) 
         'vl_pago_calc': 'vl_pago'
     })
     
-    # 5. Tabela Fato: Itens dos Contratos (Granularidade Item)
+    
     fato_itens = df_itens[[
         'id_contratacao', 'id_item', 'descricao_item', 'id_ata',
         'qtde_original', 'vl_unitario_original', 'vl_total_item',
         'cd_elemento_6d', 'nome_elemento_despesa'
     ]].copy()
     
-    # 6. Tabela Analítica Consolidada (Enriched Dataset para Análise e BI)
+    
     logger.info("Criando dataset analítico integrado (Contratos + Itens agregados)...")
     itens_resumo = df_itens.groupby('id_contratacao').agg(
         qtd_itens_total=('id_item', 'count'),

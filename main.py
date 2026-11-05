@@ -7,7 +7,6 @@ import time
 import logging
 from pathlib import Path
 
-# Adicionar raiz ao PYTHONPATH
 ROOT_DIR = Path(__file__).resolve().parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
@@ -34,29 +33,24 @@ def main():
     print(" PIPELINE DE ETL & ANÁLISE - CONTRATOS PÚBLICOS RJ ")
     print("=" * 75)
     
-    # 1. Extração (Bronze)
     print("\n>>> [1/5] ETAPA DE EXTRAÇÃO (Camada Bronze)...")
     df_contratos_raw = extrair_contratos()
     df_itens_raw = extrair_itens()
     
-    # 2. Transformação e Qualidade (Silver)
     print("\n>>> [2/5] ETAPA DE TRANSFORMAÇÃO E LIMPEZA (Camada Silver)...")
     df_contratos = transformar_contratos(df_contratos_raw)
     df_itens = transformar_itens(df_itens_raw)
     
-    # 3. Modelagem Dimensional (Gold)
     print("\n>>> [3/5] ETAPA DE MODELAGEM DIMENSIONAL (Star Schema)...")
     modelo = criar_dimensoes_e_fatos(df_contratos, df_itens)
     
-    # 4. Carga e Persistência
     print("\n>>> [4/5] ETAPA DE CARGA E PERSISTÊNCIA...")
     executar_carga(modelo)
     
-    # 5. Visualizações e Storytelling
-    print("\n>>> [5/5] ETAPA DE GERAÇÃO DE VISUALIZAÇÕES E STORYTELLING...")
+    print("\n>>> [5/5] ETAPA DE GERAÇÃO DE VISUALIZAÇÕES...")
     executar_visualizacoes(df_contratos, df_itens)
     
-    # 6. Cálculo de Métricas Executivas
+    
     metricas = gerar_relatorio_metricas(df_contratos, df_itens)
     
     duracao = time.time() - inicio

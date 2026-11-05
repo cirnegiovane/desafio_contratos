@@ -14,7 +14,6 @@ from src.config import FIGURES_DIR
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("ETL_Visualize")
 
-# Configuração de Estilo Visual
 sns.set_theme(style="whitegrid", palette="deep")
 plt.rcParams.update({
     'font.sans-serif': 'Arial',
@@ -85,7 +84,7 @@ def gerar_grafico_top_fornecedores(df_contratos: pd.DataFrame, pasta_saida: Path
     forn_agg['pct_acumulado'] = (forn_agg['vl_contrato'].cumsum() / total_geral) * 100
     
     top10 = forn_agg.head(10).copy()
-    # Encurtar nomes muito longos para legibilidade
+    
     top10['forn_curto'] = top10['fornecedor_nome'].apply(lambda x: x[:32] + '...' if len(x) > 32 else x)
     
     fig, ax1 = plt.subplots(figsize=(12, 6))
@@ -123,7 +122,7 @@ def gerar_grafico_top_orgaos(df_contratos: pd.DataFrame, pasta_saida: Path = FIG
         qtd_contratos=('id_contratacao', 'count')
     ).reset_index()
     
-    # Remover órgãos não identificados
+    
     orgaos_agg = orgaos_agg[orgaos_agg['sigla_orgao'] != 'NÃO INFORMADO']
     top10_orgaos = orgaos_agg.sort_values(by='vl_total', ascending=False).head(10).reset_index(drop=True)
     
@@ -190,7 +189,7 @@ def gerar_grafico_sazonalidade(df_contratos: pd.DataFrame, pasta_saida: Path = F
     meses_agg['nome_mes'] = meses_agg['mes_contratacao'].apply(lambda m: nomes_meses[int(m)-1])
     
     fig, ax = plt.subplots(figsize=(11, 6))
-    # Destacar o mês de pico (Dezembro/Novembro) com cor contrastante
+    
     max_val = meses_agg['vl_contrato'].max()
     cores = ['#d9534f' if v == max_val else '#337ab7' for v in meses_agg['vl_contrato']]
     
@@ -230,7 +229,7 @@ def gerar_grafico_modalidades(df_contratos: pd.DataFrame, pasta_saida: Path = FI
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
     
-    # Gráfico 1: Quantidade
+    # gráfico quantidade
     cores = sns.color_palette("Set2", n_colors=len(mod_agg))
     ax1.pie(
         mod_agg['qtd'],
@@ -242,7 +241,7 @@ def gerar_grafico_modalidades(df_contratos: pd.DataFrame, pasta_saida: Path = FI
     )
     ax1.set_title("Distribuição por Quantidade de Contratos", fontsize=13, fontweight='bold')
     
-    # Gráfico 2: Valor Financeiro
+    # gráfico valor financeiro
     ax2.pie(
         mod_agg['valor'],
         labels=mod_agg['categoria_modalidade'],

@@ -21,7 +21,7 @@ def extrair_contratos(caminho: Path = CONTRATOS_RAW_PATH) -> pd.DataFrame:
         caminho,
         encoding=RAW_ENCODING,
         sep=RAW_SEP,
-        dtype=str,  # Leitura segura como string para não perder zeros à esquerda
+        dtype=str,  # leitura segura p nao perder zeros à esquerda
         low_memory=False
     )
     logger.info(f"Contratos extraídos com sucesso: {len(df):,} linhas, {df.shape[1]} colunas.")

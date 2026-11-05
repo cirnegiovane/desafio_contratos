@@ -12,7 +12,7 @@ from src.config import ANO_MINIMO_VALIDO, ANO_MAXIMO_VALIDO
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("ETL_Transform")
 
-# Dicionário descritivo dos Elementos de Despesa Orçamentária (Portaria STN/SOF nº 163)
+# clasificação de despesas
 ELEMENTOS_DESPESA_MAP = {
     "339030": "Material de Consumo",
     "339039": "Outros Serviços de Terceiros - PJ",
@@ -71,7 +71,7 @@ def sanitizar_documento(doc: str) -> tuple[str, str]:
     if n == 14:
         return digits, "CNPJ"
     elif n == 13:
-        # Zero à esquerda perdido na exportação
+        # zero à esquerda perdido na exportação
         return digits.zfill(14), "CNPJ"
     elif n == 11:
         return digits, "CPF"
@@ -83,7 +83,7 @@ def sanitizar_documento(doc: str) -> tuple[str, str]:
 def sanitizar_data(serie: pd.Series) -> pd.Series:
     """Converte strings para datetime e invalida anos fora da janela plausível."""
     dt = pd.to_datetime(serie, format='%d/%m/%Y', errors='coerce')
-    # Anular anomalias de digitação (ex: ano 8202 ou 9201)
+    # anomalias de digitação (ex: ano 8202 ou 9201)
     filtro_anomalo = (dt.dt.year < ANO_MINIMO_VALIDO) | (dt.dt.year > ANO_MAXIMO_VALIDO)
     dt[filtro_anomalo] = pd.NaT
     return dt
@@ -142,58 +142,58 @@ def transformar_contratos(df_raw: pd.DataFrame) -> pd.DataFrame:
     }
     df = df.rename(columns=rename_dict)
     
-    # 2. Tipagem Numérica / Financeira
+    # tipagem numérica / financeira
     cols_moeda = ['vl_contrato', 'vl_empenhado', 'vl_liquidado', 'vl_pago']
     for col in cols_moeda:
         if col in df.columns:
             df[col] = df[col].apply(converter_moeda_br)
     
-    # Flags de execução orçamentária
+    # flags de execução orçamentária
     df['possui_empenho'] = df['vl_empenhado'].notna() & (df['vl_empenhado'] > 0)
     df['possui_liquidacao'] = df['vl_liquidado'].notna() & (df['vl_liquidado'] > 0)
     df['possui_pagamento'] = df['vl_pago'].notna() & (df['vl_pago'] > 0)
     
-    # Versões zeradas para cálculo contábil
+    # versões zeradas para cálculo contábil
     df['vl_empenhado_calc'] = df['vl_empenhado'].fillna(0.0)
     df['vl_liquidado_calc'] = df['vl_liquidado'].fillna(0.0)
     df['vl_pago_calc'] = df['vl_pago'].fillna(0.0)
     
-    # Razão de Execução Financeira (Pago / Contratado)
+    # razão de execução financeira
     df['taxa_execucao_paga_pct'] = np.where(
         df['vl_contrato'] > 0,
         (df['vl_pago_calc'] / df['vl_contrato']) * 100,
         0.0
     ).clip(0, 100)
     
-    # 3. Tratamento de Datas
+    # tratamento de datas
     cols_data = ['data_contratacao', 'data_inicio_vigencia', 'data_fim_vigencia', 'data_publicacao_deorj', 'data_assinatura']
     for col in cols_data:
         if col in df.columns:
             df[col] = sanitizar_data(df[col])
             
-    # Variáveis temporais derivadas
+    # variáveis temporais derivadas
     df['ano_contratacao'] = df['data_contratacao'].dt.year
     df['mes_contratacao'] = df['data_contratacao'].dt.month
     df['mes_ano_contratacao'] = df['data_contratacao'].dt.to_period('M').astype(str)
     
-    # Duração da vigência em dias
+    # duração da vigência em dias
     df['dias_vigencia'] = (df['data_fim_vigencia'] - df['data_inicio_vigencia']).dt.days
     df['vigencia_valida'] = df['dias_vigencia'] >= 0
     df.loc[~df['vigencia_valida'], 'dias_vigencia'] = np.nan
     
-    # 4. Sanitização de CPF / CNPJ
+    # sanitização de CPF / CNPJ
     docs_info = df['cpf_cnpj'].apply(sanitizar_documento)
     df['cpf_cnpj_limpo'] = [d[0] for d in docs_info]
     df['tipo_documento'] = [d[1] for d in docs_info]
     
-    # 5. Tratamento de Textos e Nulos
+    # tratamento de textos e nulos
     df['fornecedor_nome'] = df['fornecedor_nome'].fillna('NÃO INFORMADO').str.strip().str.upper()
     df['objeto_contrato'] = df['objeto_contrato'].fillna('NÃO INFORMADO').str.strip()
     df['tipo_aquisicao'] = df['tipo_aquisicao'].fillna('NÃO INFORMADO').str.strip()
     df['status_contratacao'] = df['status_contratacao'].fillna('NÃO INFORMADO').str.strip()
     df['regime_juridico'] = df['regimejuridico'].fillna('NÃO INFORMADO').str.strip()
     
-    # 6. Enriquecimento de Negócio
+    # enriquecimento de negócio
     df['sigla_orgao'] = df['unidade_nome'].apply(extrair_sigla_orgao)
     df['categoria_modalidade'] = df['tipo_aquisicao'].apply(categorizar_modalidade)
     
@@ -205,7 +205,7 @@ def transformar_itens(df_raw: pd.DataFrame) -> pd.DataFrame:
     logger.info("Iniciando transformação e limpeza de ITENS...")
     df = df_raw.copy()
     
-    # 1. Normalização de Nomes de Colunas
+    # normalização de Nomes de Colunas
     df.columns = [normalizar_nome_coluna(c) for c in df.columns]
     
     rename_dict = {
@@ -218,21 +218,21 @@ def transformar_itens(df_raw: pd.DataFrame) -> pd.DataFrame:
     }
     df = df.rename(columns=rename_dict)
     
-    # 2. Remoção de Duplicatas Totais
+    # remoção de duplicatas totais
     linhas_antes = len(df)
     df = df.drop_duplicates()
     linhas_removidas = linhas_antes - len(df)
     logger.info(f"Deduplicação: {linhas_removidas:,} linhas 100% duplicadas foram removidas de ITENS.")
     
-    # 3. Conversão Numérica
+    # conversão numérica
     df['qtde_original'] = df['qtde_original'].apply(converter_moeda_br).fillna(0.0)
     df['vl_unitario_original'] = df['vl_unitario_original'].apply(converter_moeda_br).fillna(0.0)
     df['total_aditivada_suprimida'] = df['total_aditivada_suprimida'].apply(converter_moeda_br).fillna(0.0)
     
-    # Valor Total do Item Calculado
+    # valor total do item calculado
     df['vl_total_item'] = (df['qtde_original'] * df['vl_unitario_original']).round(2)
     
-    # 4. Tratamento e Mapeamento de Elementos de Despesa
+    # tratamento e mapeamento de elementos de despesa
     def parse_codigo_elemento(val):
         if pd.isna(val):
             return "NÃO INFORMADO"
@@ -246,15 +246,15 @@ def transformar_itens(df_raw: pd.DataFrame) -> pd.DataFrame:
     df['cd_elemento_6d'] = df['cd_elemento'].apply(parse_codigo_elemento)
     df['nome_elemento_despesa'] = df['cd_elemento_6d'].map(ELEMENTOS_DESPESA_MAP).fillna('Outros Elementos Orçamentários')
     
-    # Limpeza de texto
+    # limpeza de texto
     df['descricao_item'] = df['descricao_item'].fillna('NÃO INFORMADO').str.strip().str.upper()
     
-    # 5. Consolidação de duplicidades em (id_contratacao, id_item)
-    # Agrupar itens com o mesmo ID no mesmo contrato somando quantidades e valor
+    # consolidação de duplicidades em (id_contratacao, id_item)
+    # agrupar itens com o mesmo ID no mesmo contrato somando quantidades e valor
     dups_count = df.duplicated(subset=['id_contratacao', 'id_item'], keep=False).sum()
     if dups_count > 0:
         logger.info(f"Consolidando {dups_count:,} registros de itens com mesmo (id_contratacao, id_item)...")
-        # Manter agregação limpa
+        # manter agregação limpa
         df_agrupado = df.groupby(['id_contratacao', 'id_item'], as_index=False).agg({
             'descricao_item': 'first',
             'id_ata': 'first',
@@ -265,7 +265,7 @@ def transformar_itens(df_raw: pd.DataFrame) -> pd.DataFrame:
             'nome_elemento_despesa': 'first',
             'data_extracao': 'first'
         })
-        # Recalcular valor unitário médio ponderado
+        # recalcular valor unitário médio ponderado
         df_agrupado['vl_unitario_original'] = np.where(
             df_agrupado['qtde_original'] > 0,
             (df_agrupado['vl_total_item'] / df_agrupado['qtde_original']).round(4),

@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 
-# Configuração de caminhos
 PROCESSED_DIR = Path(__file__).resolve().parent.parent / "data" / "processed"
 
 def main():

@@ -11,16 +11,14 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("ETL_Load")
 
 def salvar_tabela(df: pd.DataFrame, nome: str, pasta_destino: Path = PROCESSED_DATA_DIR):
-    """Salva o DataFrame nos formatos Parquet e CSV para máxima interoperabilidade."""
+    """Salva o DataFrame nos formatos Parquet e CSV."""
     pasta_destino.mkdir(parents=True, exist_ok=True)
     
     parquet_path = pasta_destino / f"{nome}.parquet"
     csv_path = pasta_destino / f"{nome}.csv"
     
-    # Salvar em Parquet (rápido, tipado e comprimido)
     df.to_parquet(parquet_path, index=False, engine='pyarrow')
     
-    # Salvar em CSV (compatibilidade para avaliadores e planilhas)
     df.to_csv(csv_path, index=False, sep=';', encoding='utf-8-sig')
     
     size_parquet_mb = parquet_path.stat().st_size / (1024 * 1024)
